@@ -13,9 +13,18 @@ const (
 	CarRental
 )
 
+const (
+	DinnerExpenseThreshold    = 5000
+	BreakfastExpenseThreshold = 1000
+)
+
 type Expense struct {
 	Type   ExpenseType
 	Amount int
+}
+
+func (e Expense) IsMeal() bool {
+	return e.Type == Dinner || e.Type == Breakfast
 }
 
 func PrintReport(expenses []Expense) {
@@ -25,7 +34,7 @@ func PrintReport(expenses []Expense) {
 	fmt.Printf("Expenses %s\n", time.Now().Format("2006-01-02"))
 
 	for _, expense := range expenses {
-		if expense.Type == Dinner || expense.Type == Breakfast {
+		if expense.IsMeal() {
 			mealExpenses += expense.Amount
 		}
 
@@ -40,7 +49,7 @@ func PrintReport(expenses []Expense) {
 		}
 
 		var mealOverExpensesMarker string
-		if expense.Type == Dinner && expense.Amount > 5000 || expense.Type == Breakfast && expense.Amount > 1000 {
+		if expense.Type == Dinner && expense.Amount > DinnerExpenseThreshold || expense.Type == Breakfast && expense.Amount > BreakfastExpenseThreshold {
 			mealOverExpensesMarker = "X"
 		} else {
 			mealOverExpensesMarker = " "
