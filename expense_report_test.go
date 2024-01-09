@@ -11,7 +11,6 @@ import (
 func TestPrintReport_PreRefactor(t *testing.T) {
 
 	t.Run("Expense in range", func(t *testing.T) {
-		// Running the function
 		expenses := []Expense{
 			{Type: Dinner, Amount: 4500},
 			{Type: Breakfast, Amount: 900},
@@ -81,36 +80,6 @@ func TestPrintReport_PreRefactor(t *testing.T) {
 		assert.Equal(t, expectedOutput, capturedOutput)
 	})
 }
-
-/*func TestPrintReportAddNewExpense_PostRefactor(t *testing.T) {
-
-	t.Run("Expense in range", func(t *testing.T) {
-		// Running the function
-		expenses := []Expense{
-			{Type: Dinner, Amount: 4500},
-			{Type: Breakfast, Amount: 900},
-			{Type: CarRental, Amount: 4000},
-			{Type: 5, Amount: 20000},
-		}
-
-		// Capture the output of the PrintReport function
-		capturedOutput, err := captureOutput(expenses, PrintReport)
-		if err != nil {
-			t.Fatalf("Failed to capture output: %v", err)
-		}
-
-		// Expected output
-		expectedDate := time.Now().Format("2006-01-02")
-		expectedOutput := "Expenses " + expectedDate + "\n" +
-			"Dinner\t4500\t \n" +
-			"Breakfast\t900\t \n" +
-			"Car Rental\t4000\t \n" +
-			"Meal expenses: 5400\n" +
-			"Total expenses: 9400\n"
-
-		assert.Equal(t, expectedOutput, capturedOutput)
-	})
-}*/
 
 func captureOutput(expenses []Expense, f func([]Expense)) (string, error) {
 	// Saving the original stdout
