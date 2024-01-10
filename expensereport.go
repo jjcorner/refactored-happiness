@@ -1,4 +1,4 @@
-package main
+package expensereport
 
 import (
 	"fmt"
@@ -11,6 +11,13 @@ const (
 	Dinner ExpenseType = iota + 1
 	Breakfast
 	CarRental
+	Lunch
+)
+
+const (
+	DinnerExpenseThreshold    = 5000
+	BreakfastExpenseThreshold = 1000
+	LunchExpenseThreshold     = 2000
 )
 
 type Expense struct {
@@ -18,38 +25,61 @@ type Expense struct {
 	Amount int
 }
 
-func PrintReport(expenses []Expense) {
-	total := 0
-	mealExpenses := 0
+func (e Expense) IsMeal() bool {
+	return e.Type == Dinner || e.Type == Breakfast || e.Type == Lunch
+}
 
+func (e Expense) OverThreshold() bool {
+	switch e.Type {
+	case Dinner:
+		return e.Amount > DinnerExpenseThreshold
+	case Breakfast:
+		return e.Amount > BreakfastExpenseThreshold
+	case Lunch:
+		return e.Amount > LunchExpenseThreshold
+	default:
+		return false
+	}
+}
+
+func (e Expense) Name() string {
+	switch e.Type {
+	case Dinner:
+		return "Dinner"
+	case Breakfast:
+		return "Breakfast"
+	case Lunch:
+		return "Lunch"
+	case CarRental:
+		return "Car Rental"
+	default:
+		return "Unknown"
+	}
+}
+
+func printExpense(expenses []Expense) {
 	fmt.Printf("Expenses %s\n", time.Now().Format("2006-01-02"))
-
 	for _, expense := range expenses {
-		if expense.Type == Dinner || expense.Type == Breakfast {
+		marker := " "
+		if expense.OverThreshold() {
+			marker = "X"
+		}
+		fmt.Printf("%s\t%d\t%s\n", expense.Name(), expense.Amount, marker)
+	}
+}
+func calculateTotal(expenses []Expense) (total int, mealExpenses int) {
+	for _, expense := range expenses {
+		if expense.IsMeal() {
 			mealExpenses += expense.Amount
 		}
-
-		var expenseName string
-		switch expense.Type {
-		case Dinner:
-			expenseName = "Dinner"
-		case Breakfast:
-			expenseName = "Breakfast"
-		case CarRental:
-			expenseName = "Car Rental"
-		}
-
-		var mealOverExpensesMarker string
-		if expense.Type == Dinner && expense.Amount > 5000 || expense.Type == Breakfast && expense.Amount > 1000 {
-			mealOverExpensesMarker = "X"
-		} else {
-			mealOverExpensesMarker = " "
-		}
-
-		fmt.Printf("%s\t%d\t%s\n", expenseName, expense.Amount, mealOverExpensesMarker)
 		total += expense.Amount
 	}
+	return
+}
 
-	fmt.Printf("Meal expenses: %d\n", mealExpenses)
+func PrintReport(expenses []Expense) {
+	total, mealExpense := calculateTotal(expenses)
+	printExpense(expenses)
+	fmt.Printf("Meal expenses: %d\n", mealExpense)
 	fmt.Printf("Total expenses: %d\n", total)
 }
